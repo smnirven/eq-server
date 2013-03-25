@@ -16,4 +16,5 @@
 (defn down
   "Migrates the database down from version 20130324184935."
   []
-  (println "migrations.20130324184935-create-peeks-table down..."))
+  (sql/with-connection db/db-spec
+                       (sql/drop-table :peeks)))

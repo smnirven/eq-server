@@ -18,4 +18,5 @@
 (defn down
   "Migrates the database down from version 20130324184111."
   []
-  (println "migrations.20130324184111-create-users-table down..."))
+  (sql/with-connection db/db-spec
+                       (sql/drop-table :users)))

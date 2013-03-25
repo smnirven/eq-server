@@ -20,4 +20,5 @@
 (defn down
   "Migrates the database down from version 20130324184916."
   []
-  (println "migrations.20130324184916-create-eggs-table down..."))
+  (sql/with-connection db/db-spec
+                       (sql/drop-table :eggs)))
