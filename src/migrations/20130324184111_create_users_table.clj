@@ -13,7 +13,8 @@
                     [:username "varchar NOT NULL"]
                     [:crypted_pwd "varchar NOT NULL"]
                     [:first_name "varchar"]
-                    [:last_name "varchar"])))
+                    [:last_name "varchar"]
+                    [:peek_limit "integer DEFAULT 3"])))
   
 (defn down
   "Migrates the database down from version 20130324184111."

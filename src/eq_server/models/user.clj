@@ -1,37 +1,41 @@
 (ns eq-server.models.user
   (:require [noir.util.crypt :as crypto]
-            [clojure.walk :as walk])
+            [eq-server.db :as db]
+            [clojure.java.jdbc :as sql])
   (:import [java.util UUID]))
 
-(def full-table "eq_dev_users")
+(def table-name :users)
 
-(def summary-table "eq_dev_users_by_email")
-
-(def default-peek-limit 5)
+(defn- find-user-by
+  [field value]
+  (sql/with-connection db/db-spec
+    (sql/with-query-results res
+      [(str "SELECT * FROM users WHERE " (name field) " = ?") value]
+        (let [users (doall res)]
+          (first users)))))
 
 (defn create!
   [user]
   (let [user-guid (.toString (. UUID randomUUID))
-        crypted-pwd (crypto/encrypt (:pwd user))]
-    (create-item summary-table {:email (:email user) :guid user-guid :crypted-pwd crypted-pwd})
-    (create-item full-table 
-                 (dissoc 
+        crypted-pwd (crypto/encrypt (:pwd user))
+        insertable-user (dissoc 
                    (assoc user 
                      :guid user-guid 
-                     :crypted-pwd crypted-pwd
-                     :peek-limit default-peek-limit) :pwd :pwd_conf))
-    user-guid))
+                     :crypted_pwd crypted-pwd) :pwd :pwd_conf)]
+    (sql/with-connection db/db-spec                      
+      (sql/insert-records table-name insertable-user))
+  user-guid))
 
 (defn find-user-by-email
   [email]
-  (walk/keywordize-keys (find-item summary-table email)))
+  (find-user-by :email email))
 
 (defn find-user-by-guid
   [user-guid]
-  (walk/keywordize-keys (find-item full-table user-guid)))
+  (find-user-by :guid user-guid))
 
 (defn authenticate
   "Authenticates a user"
   [email pwd]
   (let [user (find-user-by-email email)]
-    (and user (crypto/compare pwd (:crypted-pwd user)))))
+    (and user (crypto/compare pwd (:crypted_pwd user)))))
