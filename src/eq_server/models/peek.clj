@@ -5,14 +5,10 @@
 
 (defn create-peek!
   "Creates a peek in the database"
-  [{:keys [user-guid lat lng] :as params}]
-  (let [created-at (dt/now)
-        peek {:user-guid user-guid 
-              :lat lat
-              :lng lng
-              :created-at (str created-at)}]
-    (sql/with-connection db/db-spec
-      (sql/insert-records :peeks peek))))
+  [{:keys [user-id lat lng] :as params}]
+  (sql/with-connection db/db-spec
+    (sql/insert-values :peeks [:user_id :lat :lng] 
+                       [user-id (Double/parseDouble lat) (Double/parseDouble lng)])))
 
 (defn get-user-peek-count
   "Gets a count of how many peeks the user has made in the last hour"

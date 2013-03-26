@@ -1,8 +1,8 @@
 (ns eq-server.controllers.peeks
   (:require [eq-server.controllers :as controller]
-            [eq-server.db :as db]
             [eq-server.models.peek :as p]
             [eq-server.models.user :as u]
+            [eq-server.models.egg  :as e]
             [cheshire.core :refer :all]))
 
 ;; PARAMETER VALIDATIONS *************************************************************************************
@@ -12,9 +12,9 @@
   [params]
   (controller/validate-required-params! required-peek-params params)
   (let [user (u/find-user-by-guid (:user-guid params))
-        peek-limit (:peek-limit user)
-        peeks (p/get-user-peek-count (:guid user))]
-    (if (> (:count peeks) peek-limit) 
+        peek-limit (:peek_limit user)
+        cnt (p/get-user-peek-count (:guid user))]
+    (if (>= cnt peek-limit) 
       (throw (ex-info "Slow down grasshopper" {:response-code 429})))))
 ;; ************************************************************************************************************
 
@@ -24,7 +24,8 @@
   (do (validate-params! (:params request))
     (let [params (:params request)
           resp {:status 200 :headers {"Content-Type" "application/json"}}
-          eggs (db/find-nearest-eggs (:lat params) (:lng params) 10000)
+          eggs (e/find-eggs-by-distance (:lat params) (:lng params) 10000)
+          user (u/find-user-by-guid (:user-guid params))
           output-eggs (map #(dissoc % :point :id) eggs)]
-      (p/create-peek! params)
+      (p/create-peek! (assoc params :user-id (:id user)))
       (assoc resp :body (generate-string output-eggs)))))
