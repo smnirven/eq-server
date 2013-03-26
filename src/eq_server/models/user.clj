@@ -4,8 +4,6 @@
             [clojure.java.jdbc :as sql])
   (:import [java.util UUID]))
 
-(def table-name :users)
-
 (defn- find-user-by
   [field value]
   (sql/with-connection db/db-spec
@@ -23,7 +21,7 @@
                      :guid user-guid 
                      :crypted_pwd crypted-pwd) :pwd :pwd_conf)]
     (sql/with-connection db/db-spec                      
-      (sql/insert-records table-name insertable-user))
+      (sql/insert-records :users insertable-user))
   user-guid))
 
 (defn find-user-by-email
