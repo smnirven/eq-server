@@ -5,12 +5,13 @@
             [cheshire.core :refer :all]))
 
 ;; PARAMETER VALIDATIONS *************************************************************************************
+(def required-create-user-params [:email :pwd :pwd_conf :email :username])
+(def required-authenticate-params [:email :pwd])
+
 (defn- validate-create-user-params!
   "Validates parameters required for creating a user"
   [params]
-  (if-not (:email params) (throw (ex-info "email is a required parameter" {:response-code 400})))
-  (if-not (:pwd params) (throw (ex-info "pwd is a required parameter" {:response-code 400})))
-  (if-not (:pwd_conf params) (throw (ex-info "pwd_conf is a required parameter" {:response-code 400})))
+  (controller/validate-required-params! required-create-user-params params)
   (if-not (= (:pwd params) (:pwd_conf params)) (throw (ex-info "passwords don't match" {:response-code 400})))
   (let [existing-user (user/find-user-by-email (:email params))]
     (if existing-user 
@@ -21,8 +22,7 @@
 (defn- validate-authenticate-params!
   "Validates parameters required for authenticating a user"
   [params]
-  (if-not (:email params) (throw (ex-info "email is a required parameter" {:response-code 400})))
-  (if-not (:pwd params) (throw (ex-info "pwd is a required parameter" {:response-code 400})))
+  (controller/validate-required-params! required-authenticate-params params)
   (let [existing-user (user/find-user-by-email (:email params))]
     (if-not existing-user 
       (throw (ex-info (str "User " (:email params) " does not exist") {:response-code 401})))))

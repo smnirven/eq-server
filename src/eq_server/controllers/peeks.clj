@@ -5,19 +5,19 @@
             [eq-server.models.user :as u]
             [cheshire.core :refer :all]))
 
+;; PARAMETER VALIDATIONS *************************************************************************************
+(def required-peek-params [:lat :lng :user-guid])
+
 (defn- validate-params!
   [params]
-  (if-not (:lat params)
-    (throw (ex-info "lat is a required parameter" {:response-code 400})))
-  (if-not (:lng params)
-    (throw (ex-info "lng is a required parameter" {:response-code 400})))
-  (if-not (:user-guid params)
-    (throw (ex-info "user-guid is a required parameter" {:response-code 400})))
+  (controller/validate-required-params! required-peek-params params)
   (let [user (u/find-user-by-guid (:user-guid params))
         peek-limit (:peek-limit user)
         peeks (p/get-user-peek-count (:guid user))]
     (if (> (:count peeks) peek-limit) 
       (throw (ex-info "Slow down grasshopper" {:response-code 429})))))
+;; ************************************************************************************************************
+
 
 (defn create-peek
   [request]
