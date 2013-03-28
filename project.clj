@@ -4,11 +4,13 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :plugins [[lein-beanstalk "0.2.7"]]
+  :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/java.jdbc "0.2.3"]
                  [org.clojure/tools.logging "0.2.6"]
                  [log4j/log4j "1.2.17"]
                  [postgresql "9.1-901.jdbc4"]
+                 [c3p0/c3p0 "0.9.1.2"]
                  [drift "1.4.5"]
                  [ring/ring-core "1.1.8"]
                  [ring/ring-jetty-adapter "1.1.8"]

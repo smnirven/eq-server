@@ -6,7 +6,7 @@
   "Finds the nearest eggs within the specified max distance.
    Returns an array of maps, each representing an egg, in distance ascending order"
   [lat lng max-distance]
-  (sql/with-connection db/db-spec
+  (sql/with-connection (db/db-connection)
     (let [peek-point (str "POINT(" lng " " lat ")")]
       (sql/with-query-results res
         ["SELECT eggs.*, (ST_Distance(eggs.point, ?::geometry)) AS distance FROM eggs WHERE ST_Distance(eggs.point, ?::geometry) <= ? ORDER BY distance ASC"

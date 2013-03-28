@@ -6,7 +6,7 @@
 
 (defn- find-user-by
   [field value]
-  (sql/with-connection db/db-spec
+  (sql/with-connection (db/db-connection)
     (sql/with-query-results res
       [(str "SELECT * FROM users WHERE " (name field) " = ?") value]
         (let [users (doall res)]
@@ -24,7 +24,7 @@
                    (assoc user 
                      :guid user-guid 
                      :crypted_pwd crypted-pwd) :pwd :pwd_conf)]
-    (sql/with-connection db/db-spec                      
+    (sql/with-connection (db/db-connection)           
       (sql/insert-records :users insertable-user))
   user-guid))
 
