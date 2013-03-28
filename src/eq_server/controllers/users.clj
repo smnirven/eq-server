@@ -46,7 +46,7 @@
   [request]
   (let [params (:params request)]
     (validate-authenticate-params! params)
-    (let [authenticated? (user/authenticate (:email params) (:pwd params))
+    (let [authenticated? (user/find-and-authenticate (:email params) (:pwd params))
           status (if-not authenticated? 401 200)]
       {:status status
        :headers {"Content-Type" "application/json"}

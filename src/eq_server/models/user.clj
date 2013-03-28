@@ -12,6 +12,10 @@
         (let [users (doall res)]
           (first users)))))
 
+(defn- pwd-match?
+  [plain-pwd crypted-pwd]
+  (crypto/compare plain-pwd crypted-pwd))
+
 (defn create!
   [user]
   (let [user-guid (.toString (. UUID randomUUID))
@@ -32,8 +36,8 @@
   [user-guid]
   (find-user-by :guid user-guid))
 
-(defn authenticate
+(defn find-and-authenticate
   "Authenticates a user"
   [email pwd]
   (let [user (find-user-by-email email)]
-    (and user (crypto/compare pwd (:crypted_pwd user)))))
+    (and user (pwd-match? pwd (:crypted_pwd user)))))
