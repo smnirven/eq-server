@@ -1,10 +1,12 @@
-# eq_server
+Egg Quest Service
+=======================
 
-A Clojure library designed to ... well, that part is up to you.
 
-## Usage
 
-FIXME
+Usage
+-----------------------
+
+
 
 ## License
 
