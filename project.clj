@@ -14,8 +14,6 @@
                  [ring/ring-jetty-adapter "1.1.8"]
                  [compojure "1.1.5"]
                  [cheshire "5.0.2"]
-                 [rotary "0.3.0"]
-                 [clj-time "0.4.5"]
                  [noir "1.3.0" :exclusions [compojure
                                             [ring :classifier "*"]
                                             [clojure :classifier "*"]]]
