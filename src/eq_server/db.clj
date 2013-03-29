@@ -30,7 +30,8 @@
   (sql/with-connection (db-connection)
     (sql/with-query-results res
       ["select version from migrations"]
-      (or (Long/parseLong (:version (last res))) 0))))
+        (let [v (:version (last res))]
+          (Long/parseLong (or v "0"))))))
 
 (defn update-db-version [version]
   (sql/with-connection (db-connection)
