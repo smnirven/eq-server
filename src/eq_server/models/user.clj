@@ -1,5 +1,5 @@
 (ns eq-server.models.user
-  (:require [noir.util.crypt :as crypto]
+  (:require [crypto.password.bcrypt :as crypto]
             [eq-server.db :as db]
             [clojure.java.jdbc :as sql])
   (:import [java.util UUID]))
@@ -14,7 +14,7 @@
 
 (defn pwd-match?
   [plain-pwd crypted-pwd]
-  (crypto/compare plain-pwd crypted-pwd))
+  (crypto/check plain-pwd crypted-pwd))
 
 (defn encrypt-pwd
   [plain-pwd]
