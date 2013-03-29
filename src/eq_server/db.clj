@@ -51,6 +51,12 @@
   []
   (sql/with-connection (db-connection)
     (sql/do-commands
-     "INSERT INTO eggs (name, description, lat, lng, point, created_at, updated_at) VALUES ('Tonsler Park', 'First Egg', 38.02628, -78.49062, ST_GeometryFromText('POINT(-78.49062 38.02628)'), now(), now());"
-     "INSERT INTO eggs (name, description, lat, lng, point, created_at, updated_at) VALUES ('Forest Hills Park', 'What the name says', 38.02462, -78.49697, ST_GeometryFromText('POINT(-78.49697 38.02462)'), now(), now());"
-     "INSERT INTO eggs (name, description, lat, lng, point, created_at, updated_at) VALUES ('The Woodlands', 'Where Tom Lives', 38.008607, -78.526800, ST_GeometryFromText('POINT(-78.526800 38.008607)'), now(), now());")))
+     "INSERT INTO egg_types (id, name, description) VALUES (1, 'Plain Old Egg', 'Regular, run of the mill, egg');"
+     "INSERT INTO egg_types (id, name, description) VALUES (2, 'Double Points Egg', 'You find this egg, you get double points. Nuff said');"
+     "INSERT INTO egg_types (id, name, description) VALUES (3, 'Fabergé Egg', 'Solid gold and encrusted with fine gems');"
+     "INSERT INTO egg_type_modifiers (egg_type_id, find_points) VALUES (1, 10);"
+     "INSERT INTO egg_type_modifiers (egg_type_id, find_points) VALUES (2, 20);"
+     "INSERT INTO egg_type_modifiers (egg_type_id, find_points) VALUES (3, 40);"
+     "INSERT INTO eggs (name, description, lat, lng, point, egg_type_id, created_at, updated_at) VALUES ('Tonsler Park', 'First Egg', 38.02628, -78.49062, ST_GeometryFromText('POINT(-78.49062 38.02628)'), 1, now(), now());"
+     "INSERT INTO eggs (name, description, lat, lng, point, egg_type_id, created_at, updated_at) VALUES ('Forest Hills Park', 'What the name says', 38.02462, -78.49697, ST_GeometryFromText('POINT(-78.49697 38.02462)'), 1, now(), now());"
+     "INSERT INTO eggs (name, description, lat, lng, point, egg_type_id, created_at, updated_at) VALUES ('The Woodlands', 'Where Tom Lives', 38.008607, -78.526800, ST_GeometryFromText('POINT(-78.526800 38.008607)'), 3, now(), now());")))
