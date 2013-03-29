@@ -24,8 +24,9 @@
   (do (validate-params! (:params request))
     (let [params (:params request)
           resp {:status 200 :headers {"Content-Type" "application/json"}}
-          eggs (e/find-eggs-by-distance (:lat params) (:lng params) 10000)
           user (u/find-user-by-guid (:user-guid params))
+          peek-distance (:peek_distance user)
+          eggs (e/find-eggs-by-distance (:lat params) (:lng params) peek-distance)
           output-eggs (map #(dissoc % :point :id) eggs)]
       (p/create-peek! (assoc params :user-id (:id user)))
       (assoc resp :body (generate-string output-eggs)))))
