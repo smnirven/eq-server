@@ -12,14 +12,18 @@
         (let [users (doall res)]
           (first users)))))
 
-(defn- pwd-match?
+(defn pwd-match?
   [plain-pwd crypted-pwd]
   (crypto/compare plain-pwd crypted-pwd))
+
+(defn encrypt-pwd
+  [plain-pwd]
+  (crypto/encrypt plain-pwd))
 
 (defn create!
   [user]
   (let [user-guid (.toString (. UUID randomUUID))
-        crypted-pwd (crypto/encrypt (:pwd user))
+        crypted-pwd (encrypt-pwd (:pwd user))
         insertable-user (dissoc 
                    (assoc user 
                      :guid user-guid 
