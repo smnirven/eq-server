@@ -9,6 +9,11 @@
   (sql/with-connection (db/db-connection)
     (let [peek-point (str "POINT(" lng " " lat ")")]
       (sql/with-query-results res
-        ["SELECT eggs.*, (ST_Distance(eggs.point, ?::geometry)) AS distance FROM eggs WHERE ST_Distance(eggs.point, ?::geometry) <= ? ORDER BY distance ASC"
+        [(str "SELECT eggs.*, (ST_Distance(eggs.point, ?::geometry)) AS distance, "
+              "egg_types.name AS type_name, egg_types.description AS type_description "
+              "FROM eggs, egg_types, egg_type_modifiers "
+              "WHERE eggs.egg_type_id=egg_types.id "
+              "AND egg_types.id=egg_type_modifiers.egg_type_id "
+              "AND ST_Distance(eggs.point, ?::geometry) <= ? ORDER BY distance ASC")
          peek-point peek-point max-distance]
         (doall res)))))

@@ -18,7 +18,6 @@
       (throw (ex-info "Slow down grasshopper" {:response-code 429})))))
 ;; ************************************************************************************************************
 
-
 (defn create-peek
   [request]
   (do (validate-params! (:params request))
