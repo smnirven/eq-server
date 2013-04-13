@@ -1,7 +1,6 @@
 (ns eq-server.models.egg
   (:require [eq-server.db :as db]
-            [clojure.java.jdbc :as sql])
-  (:use [clojure.string]))
+            [clojure.java.jdbc :as sql]))
 
 (defn find-eggs-by-distance
   "Finds the nearest eggs within the specified max distance.
@@ -19,13 +18,11 @@
          peek-point peek-point max-distance]
         (doall res)))))
 
-;; Can't get this to work yet
-(comment
-  (defn award-eggs!
+(defn award-eggs!
   [egg-ids user-id]
   (sql/with-connection (db/db-connection)
     (sql/update-values
      :eggs
-     ["id IN(?)" (join "," egg-ids)]
-     {:user_id user-id}))))
+     ["id IN(?)" egg-ids]
+     {:user_id user-id})))
 
