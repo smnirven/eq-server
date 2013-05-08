@@ -14,7 +14,7 @@
   (let [user (u/find-user-by-guid (:user-guid params))
         peek-limit (:peek_limit user)
         cnt (p/get-user-peek-count (:guid user))]
-    (if (>= cnt peek-limit) 
+    (if (>= cnt peek-limit)
       (throw (ex-info "Slow down grasshopper" {:response-code 429})))))
 ;; ************************************************************************************************************
 
@@ -26,6 +26,9 @@
           user (u/find-user-by-guid (:user-guid params))
           peek-distance (:peek_distance user)
           eggs (e/find-eggs-by-distance (:lat params) (:lng params) peek-distance)
+          egg-ids (map #(:id %) eggs)
           output-eggs (map #(dissoc % :point :id) eggs)]
-      (p/create-peek! (assoc params :user-id (:id user)))
+      (do
+        (p/create-peek! (assoc params :user-id (:id user)))
+        (e/award-eggs! egg-ids (:id user)))
       (assoc resp :body (generate-string output-eggs)))))

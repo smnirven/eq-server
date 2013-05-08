@@ -1,14 +1,22 @@
 (ns eq-server.models.egg
   (:require [eq-server.db :as db]
-            [clojure.java.jdbc :as sql]))
+            [clojure.java.jdbc :as j]
+            [clojure.java.jdbc.sql :as s]))
+
+(defn- award-egg!
+  [egg-id user-id]
+  (j/update! (db/db-connection)
+             :eggs
+             {:user_id user-id}
+             (s/where {:id egg-id})))
 
 (defn find-eggs-by-distance
   "Finds the nearest eggs within the specified max distance.
    Returns an array of maps, each representing an egg, in distance ascending order"
   [lat lng max-distance]
-  (sql/with-connection (db/db-connection)
+  (j/with-connection (db/db-connection)
     (let [peek-point (str "POINT(" lng " " lat ")")]
-      (sql/with-query-results res
+      (j/with-query-results res
         [(str "SELECT eggs.*, (ST_Distance(eggs.point, ?::geometry)) AS distance, "
               "egg_types.name AS type_name, egg_types.description AS type_description "
               "FROM eggs, egg_types, egg_type_modifiers "
@@ -20,9 +28,4 @@
 
 (defn award-eggs!
   [egg-ids user-id]
-  (sql/with-connection (db/db-connection)
-    (sql/update-values
-     :eggs
-     ["id IN(?)" egg-ids]
-     {:user_id user-id})))
-
+  (dorun (map #(award-egg! % user-id) egg-ids)))
