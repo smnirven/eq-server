@@ -25,7 +25,7 @@
     (let [params (:params request)
           resp {:status 200 :headers {"Content-Type" "application/json"}}
           user (u/find-user-by-guid (:user-guid params))
-          peek-distance (:peek_distance user)
+          peek-distance (get user :peek_distance config/default-peek-distance)
           eggs (e/find-eggs-by-distance (:lat params)
                                         (:lng params)
                                         peek-distance
