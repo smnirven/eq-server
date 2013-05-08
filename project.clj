@@ -8,7 +8,7 @@
   :plugins [[lein-beanstalk "0.2.7"]]
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [org.clojure/java.jdbc "0.2.3"]
+                 [org.clojure/java.jdbc "0.3.0-alpha3"]
                  [org.clojure/tools.logging "0.2.6"]
                  [log4j/log4j "1.2.17"]
                  [postgresql "9.1-901.jdbc4"]
