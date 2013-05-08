@@ -1,5 +1,6 @@
 (ns eq-server.controllers.peeks
-  (:require [eq-server.controllers :as controller]
+  (:require [eq-server.config :as config]
+            [eq-server.controllers :as controller]
             [eq-server.models.peek :as p]
             [eq-server.models.user :as u]
             [eq-server.models.egg  :as e]
@@ -25,7 +26,10 @@
           resp {:status 200 :headers {"Content-Type" "application/json"}}
           user (u/find-user-by-guid (:user-guid params))
           peek-distance (:peek_distance user)
-          eggs (e/find-eggs-by-distance (:lat params) (:lng params) peek-distance)
+          eggs (e/find-eggs-by-distance (:lat params)
+                                        (:lng params)
+                                        peek-distance
+                                        config/max-awardable-eggs)
           egg-ids (map #(:id %) eggs)
           output-eggs (map #(dissoc % :point :id) eggs)]
       (do

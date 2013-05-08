@@ -13,7 +13,7 @@
 (defn find-eggs-by-distance
   "Finds the nearest eggs within the specified max distance.
    Returns an array of maps, each representing an egg, in distance ascending order"
-  [lat lng max-distance]
+  [lat lng max-distance limit]
   (j/with-connection (db/db-connection)
     (let [peek-point (str "POINT(" lng " " lat ")")]
       (j/with-query-results res
@@ -22,8 +22,10 @@
               "FROM eggs, egg_types, egg_type_modifiers "
               "WHERE eggs.egg_type_id=egg_types.id "
               "AND egg_types.id=egg_type_modifiers.egg_type_id "
-              "AND ST_Distance(eggs.point, ?::geometry) <= ? ORDER BY distance ASC")
-         peek-point peek-point max-distance]
+              "AND ST_Distance(eggs.point, ?::geometry) <= ? "
+              "ORDER BY distance ASC "
+              (if limit "LIMIT ? " ""))
+         peek-point peek-point max-distance (if limit limit)]
         (doall res)))))
 
 (defn award-eggs!
