@@ -5,7 +5,7 @@
             [cheshire.core :refer :all]))
 
 ;; PARAMETER VALIDATIONS *************************************************************************************
-(def required-create-user-params [:email :pwd :pwd_conf :email :username])
+(def required-create-user-params [:email :pwd :pwd_conf :username])
 (def required-authenticate-params [:email :pwd])
 
 (defn- validate-create-user-params!
@@ -14,8 +14,8 @@
   (controller/validate-required-params! required-create-user-params params)
   (if-not (= (:pwd params) (:pwd_conf params)) (throw (ex-info "passwords don't match" {:response-code 400})))
   (let [existing-user (user/find-user-by-email (:email params))]
-    (if existing-user 
-      (do 
+    (if existing-user
+      (do
         (log/debug (str "User " (:email params) " already exists"))
         (throw (ex-info (str "User " (:email params) " already exists") {:response-code 400}))))))
 
@@ -24,7 +24,7 @@
   [params]
   (controller/validate-required-params! required-authenticate-params params)
   (let [existing-user (user/find-user-by-email (:email params))]
-    (if-not existing-user 
+    (if-not existing-user
       (throw (ex-info (str "User " (:email params) " does not exist") {:response-code 401})))))
 
 ;; ************************************************************************************************************
