@@ -1,13 +1,14 @@
 (ns eq-server.models.user
   (:require [crypto.password.bcrypt :as crypto]
             [eq-server.db :as db]
-            [clojure.java.jdbc :as sql])
+            [clojure.java.jdbc :as j]
+            [clojure.java.jdbc.sql :as s])
   (:import [java.util UUID]))
 
 (defn- find-user-by
   [field value]
-  (sql/with-connection (db/db-connection)
-    (sql/with-query-results res
+  (j/with-connection (db/db-connection)
+    (j/with-query-results res
       [(str "SELECT * FROM users WHERE " (name field) " = ?") value]
         (let [users (doall res)]
           (first users)))))
@@ -24,12 +25,12 @@
   [user]
   (let [user-guid (.toString (. UUID randomUUID))
         crypted-pwd (encrypt-pwd (:pwd user))
-        insertable-user (dissoc 
-                   (assoc user 
-                     :guid user-guid 
+        insertable-user (dissoc
+                   (assoc user
+                     :guid user-guid
                      :crypted_pwd crypted-pwd) :pwd :pwd_conf)]
-    (sql/with-connection (db/db-connection)           
-      (sql/insert-records :users insertable-user))
+    (j/with-connection (db/db-connection)
+      (j/insert-records :users insertable-user))
   user-guid))
 
 (defn find-user-by-email
