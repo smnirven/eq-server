@@ -46,3 +46,8 @@
   [email pwd]
   (let [user (find-user-by-email email)]
     (and user (pwd-match? pwd (:crypted_pwd user)))))
+
+(defn delete-user!
+  [user-guid]
+  (j/with-connection (db/db-connection)
+    (j/delete-rows :users  ["guid = ?" user-guid])))
