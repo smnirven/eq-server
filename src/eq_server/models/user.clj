@@ -47,7 +47,15 @@
   (let [user (find-user-by-email email)]
     (and user (pwd-match? pwd (:crypted_pwd user)))))
 
+;; TODO: Wrap this in a transaction
+;; TODO: update this to use non-deprecated jdbc method calls
 (defn delete-user!
   [user-guid]
-  (j/with-connection (db/db-connection)
-    (j/delete-rows :users  ["guid = ?" user-guid])))
+  (let [user-to-delete (find-user-by-guid user-guid)]
+    (j/with-connection (db/db-connection)
+      (j/delete-rows :users  ["id = ?" (:id user-to-delete)])
+      (j/delete-rows :peeks ["user_id = ?" (:id user-to-delete)])
+      (j/update! (db/db-connection)
+             :eggs
+             {:user_id nil}
+             (s/where {:user_id (:id user-to-delete)})))))
