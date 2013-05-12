@@ -31,16 +31,15 @@
           user (u/find-user-by-guid (:user-guid params))
           peek-distance (if (:peek_distance user) (:peek_distance user)
                           config/default-peek-distance)
-          eggs (e/find-eggs-by-distance (:lat params)
+          eggs (e/find-awardable-eggs-by-distance (:lat params)
                                         (:lng params)
                                         peek-distance
                                         config/max-awardable-eggs)
-          egg-ids (map #(:id %) eggs)
           output-eggs (map #(dissoc % :point :id) eggs)]
       (do
         (log/trace (str "peeking with lat: " (:lat params)
                         " lng: " (:lng params)
                         " peek-distance: " peek-distance))
         (p/create-peek! (assoc params :user-id (:id user)))
-        (e/award-eggs! egg-ids (:id user)))
+        (e/award-eggs! eggs user))
       (assoc resp :body (generate-string output-eggs)))))
