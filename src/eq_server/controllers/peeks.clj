@@ -13,7 +13,9 @@
   [params]
   (controller/validate-required-params! required-peek-params params)
   (let [user (u/find-user-by-guid (:user-guid params))
-        peek-limit (:peek_limit user)
+        peek-limit (cond
+                     (:peek_limit user) (:peek_limit user)
+                    :else config/default-hourly-peek-limit)
         cnt (p/get-user-peek-count (:guid user))]
     (if (>= cnt peek-limit)
       (throw (ex-info "Slow down grasshopper" {:response-code 429})))))
