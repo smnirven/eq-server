@@ -1,7 +1,6 @@
 (ns eq-server.integration.controllers.peeks
   (:require [eq-server.routes :as r]
-            [eq-server.models.user :as u]
-            [eq-server.config :as config])
+            [eq-server.models.user :as u])
   (:use [eq-server.controllers.peeks]
         [midje.sweet]
         [ring.mock.request]))
@@ -41,7 +40,7 @@
   (facts "user hitting the peek limit is handled properly"
     (do
       ;; First use up the hourly peek limit for a user
-      (do-a-bunch-of-peeks! @user-guid 34.567 34.567 config/default-hourly-peek-limit)
+      (do-a-bunch-of-peeks! @user-guid 34.567 34.567 3)
       ;; Than do one more, make sure the peek limit is enforced
       (let [resp (r/app (request :post "/peeks/create" {:user-guid @user-guid
                                                         :lat 34.567

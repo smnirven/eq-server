@@ -20,6 +20,8 @@
                  [compojure "1.1.5"]
                  [cheshire "5.0.2"]
                  [crypto-password "0.1.0"]
-                 [clj-time "0.4.5" :exclusions [[clojure :classifier "*"]]]]
-  :ring {:handler eq-server.routes/app}
+                 [clj-time "0.4.5" :exclusions [[clojure :classifier "*"]]]
+                 [com.netflix.curator/curator-framework "1.3.3"]
+                 [com.netflix.curator/curator-recipes "1.3.3"]]
+  :ring {:handler eq-server.routes/app :init eq-server.core/init!}
   :aws {:beanstalk {:environments [{:name "eq-dev" :cname-prefix "eq-dev"}]}})
