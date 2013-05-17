@@ -7,7 +7,7 @@
   [egg-id user-id]
   (j/update! (db/db-connection)
              :eggs
-             {:user_id user-id}
+             {:user_id user-id :lat nil :lng nil}
              (s/where {:id egg-id})))
 
 (defn find-awardable-eggs-by-distance
