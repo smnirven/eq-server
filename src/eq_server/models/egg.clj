@@ -41,3 +41,12 @@
                :users
                {:score score-sum}
                (s/where {:id (:id user)}))))
+
+(defn get-user-eggs
+  "Returns a list of all eggs that are owned by a give user"
+  [user-guid]
+  (j/query
+   (db/db-connection)
+   (s/select :e.* {:eggs :e}
+          (s/join {:users :u} {:e.user_id :u.id})
+          (s/where {:u.guid user-guid}))))
