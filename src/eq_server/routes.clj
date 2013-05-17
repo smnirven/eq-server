@@ -16,7 +16,8 @@
                  :body "<h1>Hello World</h1>"})
   (POST "/peeks/create" [] peeks/create-peek)
   (POST "/users/create" [] users/create-user)
-  (POST "/users/authenticate" [] users/authenticate))
+  (POST "/users/authenticate" [] users/authenticate)
+  (GET "/users/eggs" [] users/list-eggs))
 
 (def app
   (-> (handler/site main-routes)

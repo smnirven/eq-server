@@ -8,7 +8,7 @@
   [egg-id user-id]
   (j/update! (db/db-connection)
              :eggs
-             {:user_id user-id}
+             {:user_id user-id :lat nil :lng nil}
              (s/where {:id egg-id})))
 
 (defn- update-user-score!
@@ -48,3 +48,12 @@
     (do
       (dorun (map #(award-egg! % user-id) egg-ids))
       (update-user-score! user-id score-sum))))
+
+(defn get-user-eggs
+  "Returns a list of all eggs that are owned by a give user"
+  [user-guid]
+  (j/query
+   (db/db-connection)
+   (s/select :e.* {:eggs :e}
+          (s/join {:users :u} {:e.user_id :u.id})
+          (s/where {:u.guid user-guid}))))
