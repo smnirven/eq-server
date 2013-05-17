@@ -4,11 +4,20 @@
             [clojure.java.jdbc.sql :as s]))
 
 (defn- award-egg!
+  "Awards an egg to the user that found it"
   [egg-id user-id]
   (j/update! (db/db-connection)
              :eggs
              {:user_id user-id}
              (s/where {:id egg-id})))
+
+(defn- update-user-score!
+  "Updates the score of a user"
+  [user-id new-total-score]
+  (j/update! (db/db-connection)
+             :users
+             {:score new-total-score}
+             (s/where {:id user-id})))
 
 (defn find-awardable-eggs-by-distance
   "Finds the nearest eggs within the specified max distance.
@@ -36,8 +45,6 @@
         egg-ids (map #(:id %) eggs)
         egg-scores (map #(:points %) eggs)
         score-sum (+ (:score user) (reduce + egg-scores))]
-    (dorun (map #(award-egg! % user-id) egg-ids))
-    (j/update! (db/db-connection)
-               :users
-               {:score score-sum}
-               (s/where {:id (:id user)}))))
+    (do
+      (dorun (map #(award-egg! % user-id) egg-ids))
+      (update-user-score! user-id score-sum))))
