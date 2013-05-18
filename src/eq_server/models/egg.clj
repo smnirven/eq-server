@@ -6,10 +6,10 @@
 (defn- award-egg!
   "Awards an egg to the user that found it"
   [egg-id user-id]
-  (j/update! (db/db-connection)
-             :eggs
-             {:user_id user-id :lat nil :lng nil}
-             (s/where {:id egg-id})))
+  (j/db-do-prepared (db/db-connection)
+                    true
+                    "update eggs set user_id=?::int, lat=null, lng=null, point=null,updated_at=now() where id=?::int"
+                    [user-id egg-id]))
 
 (defn- update-user-score!
   "Updates the score of a user"
