@@ -5,7 +5,8 @@
   (:require [eq-server.middleware :as mw]
             [eq-server.controllers
              [peeks :as peeks]
-             [users :as users]]
+             [users :as users]
+             [eggs :as eggs]]
             [compojure.route :as route]
             [compojure.handler :as handler]
             [compojure.response :as response]))
@@ -17,7 +18,8 @@
   (POST "/peeks/create" [] peeks/create-peek)
   (POST "/users/create" [] users/create-user)
   (POST "/users/authenticate" [] users/authenticate)
-  (GET "/users/eggs" [] users/list-eggs))
+  (GET "/users/eggs" [] users/list-eggs)
+  (POST "/eggs/hide" [] eggs/hide-egg))
 
 (def app
   (-> (handler/site main-routes)

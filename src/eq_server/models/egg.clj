@@ -53,7 +53,21 @@
   "Returns a list of all eggs that are owned by a give user"
   [user-guid]
   (j/query
-   (db/db-connection)
-   (s/select :e.* {:eggs :e}
-          (s/join {:users :u} {:e.user_id :u.id})
-          (s/where {:u.guid user-guid}))))
+    (db/db-connection)
+    (s/select :e.* {:eggs :e}
+              (s/join {:users :u} {:e.user_id :u.id})
+              (s/where {:u.guid user-guid}))))
+
+(defn hide-egg!
+  "Stashes an egg somewhere for someone else to find"
+  [egg-id lat lng]
+  (let [point (str "ST_GeometryFromText('POINT(" lng " " lat ")')")]
+    (try
+      (j/db-do-prepared
+       (db/db-connection)
+       true
+       (str "update eggs set lat=?::numeric, lng=?::numeric, user_id=null, point=" point ", updated_at=now() where id=?::int")
+       [lat lng egg-id])
+      (catch Throwable e
+        (prn e)
+        (prn (.getNextException e))))))
