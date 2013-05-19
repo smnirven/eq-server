@@ -10,7 +10,10 @@
 (defn- validate-hide-egg-params!
   "Validates parameters for hiding an egg"
   [params]
-  (controller/validate-required-params! required-hide-egg-params params))
+  (controller/validate-required-params! required-hide-egg-params params)
+  (let [user-egg-ids (map #(:id %) (egg/get-user-eggs (:user-guid params)))]
+    (if-not (some #(= (Integer/parseInt (:egg-id params)) %) user-egg-ids)
+      (throw (ex-info "You don't own that egg!" {:response-code 400})))))
 
 ;; **********************
 
