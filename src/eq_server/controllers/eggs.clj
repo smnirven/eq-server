@@ -17,9 +17,15 @@
 
 ;; **********************
 
-
 (defn hide-egg
   [request]
   (let [params (:params request)]
     (validate-hide-egg-params! params)
-    (egg/hide-egg! (:egg-id params) (:lat params) (:lng params))))
+    (try
+      (egg/hide-egg! (:egg-id params) (:lat params) (:lng params))
+      (catch Throwable e
+        (log/error (.getMessage e))
+        (throw (ex-info "Something went wrong" {:response-code 500}))))
+    {:headers {"Content-Type" "application/json"}
+     :body (generate-string {:message "You're egg is now hidden"})
+     :response-code 200}))
