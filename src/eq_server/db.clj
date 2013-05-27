@@ -15,8 +15,8 @@
                                      :user "eggquest"
                                      :password "jUhu8ETH"}})
 
-(def db-spec
-  (memoize #(get db-specification (core/stage))))
+(defn db-spec
+  (get db-specification (core/stage)))
 
 
 (defn pool
