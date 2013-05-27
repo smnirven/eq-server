@@ -5,7 +5,9 @@
 (defn- get-env
   []
   (keyword (or (System/getProperty "PARAM1")
-               (System/getProperty "ENV") "development" )))
+               (System/getProperty "ENV")
+               (System/getenv "ENV")
+               "development")))
 
 (def stage
   (memoize get-env))
