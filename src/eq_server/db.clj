@@ -1,28 +1,38 @@
 (ns eq-server.db
-  (:require [clojure.java.jdbc :as sql]
+  (:require [eq-server.core :as core]
+            [clojure.java.jdbc :as sql]
             [clojure.tools.logging :as log])
   (:import com.mchange.v2.c3p0.ComboPooledDataSource))
 
-(def db-spec {:classname "org.postgresql.Driver"
-              :subprotocol "postgresql"
-              :subname "//localhost:5432/eq_dev"
-              :user "smnirven"
-              :password "letmein"})
+(def db-specification {:development {:classname "org.postgresql.Driver"
+                                     :subprotocol "postgresql"
+                                     :subname "//localhost:5432/eq_dev"
+                                     :user "smnirven"
+                                     :password "letmein"}
+                       :production {:classname "org.postgresql.Driver"
+                                     :subprotocol "postgresql"
+                                     :subname "//eq-database-prod.smnirven.net:5432/eq"
+                                     :user "eggquest"
+                                     :password "jUhu8ETH"}})
+
+(def db-spec
+  (memoize #(get db-specification (core/stage))))
+
 
 (defn pool
   [spec]
   (let [cpds (doto (ComboPooledDataSource.)
-               (.setDriverClass (:classname spec)) 
+               (.setDriverClass (:classname spec))
                (.setJdbcUrl (str "jdbc:" (:subprotocol spec) ":" (:subname spec)))
                (.setUser (:user spec))
                (.setPassword (:password spec))
                ;; expire excess connections after 30 minutes of inactivity:
                (.setMaxIdleTimeExcessConnections (* 30 60))
                ;; expire connections after 3 hours of inactivity:
-               (.setMaxIdleTime (* 3 60 60)))] 
+               (.setMaxIdleTime (* 3 60 60)))]
     {:datasource cpds}))
 
-(def pooled-db (delay (pool db-spec)))
+(def pooled-db (delay (pool (db-spec))))
 
 (defn db-connection [] @pooled-db)
 
