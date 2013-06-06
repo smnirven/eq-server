@@ -42,6 +42,8 @@
                                         @max-awardable-eggs)
           output-eggs (map #(dissoc % :point :id) eggs)]
       (do
+        (if (nil? user) (throw (ex-info (str "User-guid " (:user-guid params) " does not exist")
+                                        {:response-code 400})))
         (log/trace (str "peeking with lat: " (:lat params)
                         " lng: " (:lng params)
                         " peek-distance: " peek-distance))
