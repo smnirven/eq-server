@@ -11,15 +11,25 @@
             [compojure.handler :as handler]
             [compojure.response :as response]))
 
+(defroutes user-routes
+  (POST "/create" [] users/create-user)
+  (POST "/authenticate" [] users/authenticate)
+  (GET "/eggs" [] users/list-eggs))
+
+(defroutes peek-routes
+  (POST "/create" [] peeks/create-peek))
+
+(defroutes egg-routes
+  (POST "/hide" [] eggs/hide-egg))
+
 (defroutes main-routes
   (GET "/hc" [] {:status 200
                  :headers {"Content-Type" "text/html"}
                  :body "<h1>Hello World</h1>"})
-  (POST "/peeks/create" [] peeks/create-peek)
-  (POST "/users/create" [] users/create-user)
-  (POST "/users/authenticate" [] users/authenticate)
-  (GET "/users/eggs" [] users/list-eggs)
-  (POST "/eggs/hide" [] eggs/hide-egg))
+  (context "/users" [] user-routes)
+  (context "/peeks" [] peek-routes)
+  (context "/eggs" [] egg-routes))
+
 
 (def app
   (-> (handler/site main-routes)
