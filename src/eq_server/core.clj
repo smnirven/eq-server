@@ -1,4 +1,6 @@
-(ns eq-server.core
+(ns ^{:author "Thomas Steffes"
+      :doc "Core Application for EggQuest Web Service"}
+    eq-server.core
   (:require [clojure.tools.logging :as log]
             [eq-server.drcfg :as drcfg]))
 

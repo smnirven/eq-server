@@ -1,4 +1,6 @@
-(ns eq-server.controllers.users
+(ns ^{:author "Thomas Steffes"
+      :doc "Controller for the users resource"}
+    eq-server.controllers.users
   (:require [eq-server.controllers :as controller]
             [eq-server.models.user :as user]
             [eq-server.models.egg :as egg]

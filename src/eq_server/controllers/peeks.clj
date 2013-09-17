@@ -1,4 +1,6 @@
-(ns eq-server.controllers.peeks
+(ns ^{:author "Thomas Steffes"
+      :doc "Controller for the peeks resource"}
+    eq-server.controllers.peeks
   (:require [eq-server.controllers :as controller]
             [eq-server.models.peek :as p]
             [eq-server.models.user :as u]

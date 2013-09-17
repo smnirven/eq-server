@@ -1,4 +1,6 @@
-(ns eq-server.models.egg
+(ns ^{:author "Thomas Steffes"
+      :doc "Model code for an egg"}
+    eq-server.models.egg
   (:require [eq-server.db :as db]
             [clojure.java.jdbc :as j]
             [clojure.java.jdbc.sql :as s]))

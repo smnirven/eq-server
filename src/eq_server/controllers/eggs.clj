@@ -1,4 +1,6 @@
-(ns eq-server.controllers.eggs
+(ns ^{:author "Thomas Steffes"
+      :doc "Controller for eggs resource"}
+    eq-server.controllers.eggs
   (:require [eq-server.controllers :as controller]
             [eq-server.models.egg :as egg]
             [clojure.tools.logging :as log]

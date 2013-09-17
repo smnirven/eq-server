@@ -1,4 +1,6 @@
-(ns eq-server.models.peek
+(ns ^{:author "Thomas Steffes"
+      :doc "Model code for peeks"}
+    eq-server.models.peek
   (:require [clj-time.core :as dt]
             [clj-time.coerce :as dtc]
             [eq-server.db :as db]
@@ -8,7 +10,7 @@
   "Creates a peek in the database"
   [{:keys [user-id lat lng] :as params}]
   (sql/with-connection (db/db-connection)
-    (sql/insert-values :peeks [:user_id :lat :lng] 
+    (sql/insert-values :peeks [:user_id :lat :lng]
                        [user-id (Double/parseDouble lat) (Double/parseDouble lng)])))
 
 (defn get-user-peek-count
