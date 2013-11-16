@@ -52,7 +52,7 @@
   (sql/create-table :migrations
                     [:version "varchar NOT NULL"]))
 
-(defn create-tables
+(defn create-tables!
   []
   (sql/with-connection (db-connection)
     (create-migrations-table)))
