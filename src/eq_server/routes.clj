@@ -6,10 +6,18 @@
             [eq-server.controllers
              [peeks :as peeks]
              [users :as users]
-             [eggs :as eggs]]
+             [eggs :as eggs]
+             [health-check :as hc]]
             [compojure.route :as route]
             [compojure.handler :as handler]
-            [compojure.response :as response]))
+            [compojure.response :as response]
+            [liberator.core :refer [resource defresource]]))
+
+(def media-types ["text/html"
+                  "text/plain"
+                  "text/csv"
+                  "application/json"
+                  "application/edn"])
 
 (defroutes user-routes
   (POST "/create" [] users/create-user)
@@ -23,9 +31,8 @@
   (POST "/hide" [] eggs/hide-egg))
 
 (defroutes main-routes
-  (GET "/hc" [] {:status 200
-                 :headers {"Content-Type" "text/html"}
-                 :body "<h1>Hello World</h1>"})
+  (ANY "/health-check" [] (resource :available-media-types media-types
+                                    :handle-ok (fn [ctx] (hc/handler ctx))))
   (context "/users" [] user-routes)
   (context "/peeks" [] peek-routes)
   (context "/eggs" [] egg-routes))

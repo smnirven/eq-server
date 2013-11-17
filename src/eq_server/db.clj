@@ -4,16 +4,16 @@
             [clojure.tools.logging :as log])
   (:import com.mchange.v2.c3p0.ComboPooledDataSource))
 
-(def db-specification {:development {:classname "org.postgresql.Driver"
-                                     :subprotocol "postgresql"
-                                     :subname "//localhost:5432/eq_dev"
-                                     :user "smnirven"
-                                     :password "letmein"}
-                       :production {:classname "org.postgresql.Driver"
-                                     :subprotocol "postgresql"
-                                     :subname "//eq-database-prod.smnirven.net:5432/eq"
-                                     :user "eggquest"
-                                     :password "jUhu8ETH"}})
+(def db-specification {:dev {:classname "org.postgresql.Driver"
+                             :subprotocol "postgresql"
+                             :subname "//localhost:5432/eq_dev"
+                             :user "smnirven"
+                             :password "letmein"}
+                       :prod {:classname "org.postgresql.Driver"
+                              :subprotocol "postgresql"
+                              :subname "//eq-database-prod.smnirven.net:5432/eq"
+                              :user "eggquest"
+                              :password "jUhu8ETH"}})
 
 (def db-spec
   (memoize #(get db-specification (core/stage))))

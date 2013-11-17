@@ -9,7 +9,7 @@
   (keyword (or (System/getProperty "PARAM1")
                (System/getProperty "ENV")
                (System/getenv "ENV")
-               "development")))
+               "dev")))
 
 (def stage
   (memoize get-env))
