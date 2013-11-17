@@ -52,7 +52,7 @@
       (update-user-score! user-id score-sum))))
 
 (defn get-user-eggs
-  "Returns a list of all eggs that are owned by a give user"
+  "Returns a list of all eggs that are owned by a given user"
   [user-guid]
   (j/query
     (db/db-connection)
