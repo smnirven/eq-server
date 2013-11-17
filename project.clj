@@ -8,7 +8,7 @@
                    :dependencies [[midje "1.6-alpha2"]
                                   [ring-mock "0.1.5"]]}}
   :plugins [[lein-beanstalk "0.2.7"]]
-  :min-lein-version "2.0.0"
+  :min-lein-version "2.3.3"
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/java.jdbc "0.3.0-alpha4"]
                  [org.clojure/tools.logging "0.2.6"]
