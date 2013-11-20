@@ -18,10 +18,16 @@
                   "application/json"
                   "application/edn"])
 
+(defresource user-eggs [user-guid]
+  :available-media-types media-types
+  :allowed-methods [:get]
+  :exists? (fn [ctx] (users/exists? user-guid))
+  :handle-ok (fn [ctx] (users/list-eggs user-guid)))
+
 (defroutes user-routes
   (POST "/create" [] users/create-user)
   (POST "/authenticate" [] users/authenticate)
-  (GET "/eggs" [] users/list-eggs))
+  (ANY "/:user-guid/eggs" [user-guid] (user-eggs user-guid)))
 
 (defroutes peek-routes
   (ANY "/create" [] peeks/create-peek))

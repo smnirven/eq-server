@@ -61,12 +61,19 @@
        :headers {"Content-Type" "application/json"}
        :body (generate-string {:authenticated authenticated?})})))
 
+(defn exists?
+  [user-guid]
+  (let [u (user/find-user-by-guid user-guid)]
+    (if-not (nil? u)
+      {::user u}
+      false)))
+
 (defn list-eggs
-  "Lists all the eggs that a user has"
-  [request]
-  (let [params (:params request)]
-    (validate-list-eggs-params! params)
-    (let [eggs (map #(dissoc % :point :id) (egg/get-user-eggs (:user-guid params)))]
-      {:status 200
-       :headers {"Content-Type" "application/json"}
-       :body (generate-string {:eggs eggs})})))
+  "Returns a seq of maps of all the eggs owned by the specified user"
+  [user-guid]
+  (map (fn [e]
+         (-> e
+             (dissoc :id :point)
+             (merge {:created_at (.toString (:created_at e))
+                     :updated_at (.toString (:updated_at e))})))
+       (egg/get-user-eggs user-guid)))
