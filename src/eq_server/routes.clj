@@ -8,10 +8,9 @@
              [users :as users]
              [eggs :as eggs]
              [health-check :as hc]]
-            [compojure.route :as route]
             [compojure.handler :as handler]
-            [compojure.response :as response]
-            [liberator.core :refer [resource defresource]]))
+            [liberator.core :refer [resource defresource]]
+            [liberator.dev]))
 
 (def media-types ["text/html"
                   "text/plain"
@@ -25,10 +24,20 @@
   (GET "/eggs" [] users/list-eggs))
 
 (defroutes peek-routes
-  (POST "/create" [] peeks/create-peek))
+  (ANY "/create" [] peeks/create-peek))
 
 (defroutes egg-routes
-  (POST "/hide" [] eggs/hide-egg))
+  (ANY "/hide" []
+       (resource :available-media-types media-types
+                 :allowed-methods [:put]
+                 :malformed? (fn [ctx] (eggs/malformed-for-hide? ctx))
+                 :allowed? (fn [ctx] (eggs/allowed-for-hide? ctx))
+                 :handle-ok (fn [ctx] {:egg-id (get-in ctx [:request :params :egg-id])
+                                      :lat (get-in ctx [:request :params :lat])
+                                      :lng (get-in ctx [:request :params :lng])})
+                 :new? false
+                 :respond-with-entity? true
+                 :put! (fn [ctx] (eggs/hide-handler ctx)))))
 
 (defroutes main-routes
   (ANY "/health-check" [] (resource :available-media-types media-types
@@ -42,4 +51,5 @@
   (-> (handler/site main-routes)
       (mw/wrap-exception-handling)
       (wrap-params)
-      (wrap-content-type)))
+      (wrap-content-type)
+      (liberator.dev/wrap-trace :header :ui)))

@@ -68,7 +68,9 @@
       (j/db-do-prepared
        (db/db-connection)
        true
-       (str "update eggs set lat=?::numeric, lng=?::numeric, user_id=null, point=" point ", updated_at=now() where id=?::int")
+       (str "update eggs set lat=?::numeric, lng=?::numeric, user_id=null, point="
+            point
+            ", updated_at=now() where id=?::int")
        [lat lng egg-id])
       (catch Throwable e
         (prn e)
