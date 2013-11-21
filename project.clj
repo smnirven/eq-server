@@ -10,10 +10,10 @@
   :plugins [[lein-beanstalk "0.2.7"]]
   :min-lein-version "2.3.3"
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [org.clojure/java.jdbc "0.3.0-alpha4"]
+                 [org.clojure/java.jdbc "0.3.0-beta1"]
                  [org.clojure/tools.logging "0.2.6"]
                  [log4j/log4j "1.2.17"]
-                 [postgresql "9.1-901-1.jdbc4"]
+                 [org.postgresql/postgresql "9.3-1100-jdbc41"]
                  [c3p0/c3p0 "0.9.1.2"]
                  [ring "1.2.1"]
                  [compojure "1.1.6"]
