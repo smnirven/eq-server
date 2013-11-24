@@ -46,7 +46,13 @@
 
 (defroutes anonymous-routes
   (ANY "/users" [] (resource :available-media-types media-types
-                             :allowed-methods [:post]))
+                             :allowed-methods [:post]
+                             :processable? (fn [{:keys [request] :as ctx
+                                              {:keys [params] :as params} :request}]
+                                             (users/processable-for-create? params))
+                             :post! (fn [{:keys [request] :as ctx
+                                         {:keys [params] :as params} :request}]
+                                      (users/create-handler params))))
   (ANY "/health-check" [] (resource :available-media-types media-types
                                     :handle-ok (fn [ctx] (hc/handler ctx)))))
 (defroutes all-routes
@@ -58,10 +64,9 @@
                                      :credential-fn #(creds/bcrypt-credential-fn users/load-creds %)
                                      :realm "EggQuest")]}))
 
-
 (def app
   (-> (handler/site all-routes)
-      (mw/wrap-exception-handling)
+;;      (mw/wrap-exception-handling)
       (wrap-params)
       (wrap-content-type)
       (liberator.dev/wrap-trace :header :ui)))

@@ -5,7 +5,10 @@
             [clojure.java.jdbc.sql :as s])
   (:import [java.util UUID]))
 
+(def allowed-fields-for-create [:username :email :pwd :pwd_conf :first_name :last_name])
+
 (defn- find-by
+  "Performs a lookup in the database by the field name specified, equality only."
   [field value]
   (j/with-connection (db/db-connection)
     (j/with-query-results res
@@ -22,15 +25,21 @@
   (creds/hash-bcrypt plain-pwd))
 
 (defn create!
+  "Creates a new user in the database. Takes a map of data
+  representative of the fields in the users table. The map is
+  sanitized to only allow certain fields to be included for insertion
+  to the database (eq-server.models.user/allowed-fields-for-create).
+  Returns the guid (String) of the newly created user"
   [user]
-  (let [user-guid (.toString (. UUID randomUUID))
-        crypted-pwd (encrypt-pwd (:pwd user))
-        insertable-user (dissoc
-                   (assoc user
-                     :guid user-guid
-                     :crypted_pwd crypted-pwd) :pwd :pwd_conf)]
+  (let [sanitized-user (select-keys user allowed-fields-for-create)
+        user-guid (.toString (. UUID randomUUID))
+        crypted-pwd (encrypt-pwd (:pwd sanitized-user))]
     (j/with-connection (db/db-connection)
-      (j/insert-records :users insertable-user))
+      (j/insert-records :users
+                        (dissoc
+                         (assoc sanitized-user
+                           :guid user-guid
+                           :crypted_pwd crypted-pwd) :pwd :pwd_conf)))
   user-guid))
 
 (defn find-by-email
@@ -47,6 +56,8 @@
 
 ;; TODO: Wrap this in a transaction
 ;; TODO: update this to use non-deprecated jdbc method calls
+;; TODO: Do we really need the ability to destroy a user? Maybe
+;; transform this to logical delete
 (defn delete-user!
   [user-guid]
   (let [user-to-delete (find-by-guid user-guid)]

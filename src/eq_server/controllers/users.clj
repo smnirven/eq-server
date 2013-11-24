@@ -8,19 +8,29 @@
             [cheshire.core :refer :all]))
 
 (def required-create-user-params [:email :pwd :pwd_conf :username])
-(def required-authenticate-params [:email :pwd])
-(def required-list-eggs-params [:user-guid])
 
-(defn create-user
+(defn processable-for-create?
+  "Checks if create user request is processable. Must return TRUE for a
+  good request"
+  [params]
+  (let [missing-fields
+        (vec (filter (fn [p] (not (contains? params p))) required-create-user-params))
+        email-exists? (not (nil? (user/find-by-email (:email params))))
+        username-exists? (not (nil? (user/find-by-username (:username params))))]
+    (cond
+     email-exists? [false {::errors {:email-exists true}}]
+     username-exists? [false {::errors {:username-exists true}}]
+     (not (empty? missing-fields)) [false
+                                    {::errors {:required-missing-fields missing-fields}}]
+     :else true)))
+
+(defn create-handler
   "Creates a new user in the database"
-  [request]
-  (log/debug "Got a create user request")
-  (let [params (:params request)]
-    (let [user-guid (user/create! params)]
-      {:status 200
-       :headers {"Content-Type" "application/json"}
-       :body (generate-string {:guid user-guid})})))
+  [params]
+  (let [user-guid (user/create! params)]
+    {::user-guid user-guid}))
 
+;;TODO Blow this function away
 (defn exists?
   [user-guid]
   (let [u (user/find-by-guid user-guid)]
