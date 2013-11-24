@@ -2,7 +2,8 @@
   (:use [compojure.core]
         [ring.middleware.params]
         [ring.middleware.content-type])
-  (:require [eq-server.middleware :as mw]
+  (:require [clojure.tools.logging :as log]
+            [eq-server.middleware :as mw]
             [eq-server.controllers
              [peeks :as peeks]
              [users :as users]
@@ -21,16 +22,13 @@
                   "application/json"
                   "application/edn"])
 
-(def users (atom {"friend" {:username "friend"
-                            :password (creds/hash-bcrypt "clojure")}}))
-
 (defresource user-eggs [user-guid]
   :available-media-types media-types
   :allowed-methods [:get]
   :exists? (fn [ctx] (users/exists? user-guid))
   :handle-ok (fn [ctx] (users/list-eggs user-guid)))
 
-(defroutes needs-authentication-routes
+(defroutes authenticated-routes
   (ANY "/users/:user-guid/eggs" [user-guid] (user-eggs user-guid))
   (GET "/needs-auth" req
        (friend/authenticated (str "GREAT SUCCESS: " (friend/current-authentication))))
@@ -53,11 +51,11 @@
                                     :handle-ok (fn [ctx] (hc/handler ctx)))))
 (defroutes all-routes
   anonymous-routes
-  (friend/authenticate needs-authentication-routes
-                       {:allow-anon? false
+  (friend/authenticate authenticated-routes
+                       {:allow-anon? true
                         :unauthenticated-handler #(workflows/http-basic-deny "EggQuest" %)
                         :workflows [(workflows/http-basic
-                                     :credential-fn #(do (println %) (creds/bcrypt-credential-fn @users %))
+                                     :credential-fn #(creds/bcrypt-credential-fn users/load-creds %)
                                      :realm "EggQuest")]}))
 
 

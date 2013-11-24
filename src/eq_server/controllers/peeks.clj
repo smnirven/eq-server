@@ -20,7 +20,7 @@
 (defn- validate-params!
   [params]
   (controller/validate-required-params! required-peek-params params)
-  (let [user (u/find-user-by-guid (:user-guid params))
+  (let [user (u/find-by-guid (:user-guid params))
         peek-limit (if (:peek_limit user) (:peek_limit user)
                      @default-hourly-peek-limit)
         cnt (p/get-user-peek-count (:guid user))]
@@ -35,7 +35,7 @@
     (validate-params! (:params request))
     (let [params (:params request)
           resp {:status 200 :headers {"Content-Type" "application/json"}}
-          user (u/find-user-by-guid (:user-guid params))
+          user (u/find-by-guid (:user-guid params))
           peek-distance (if (:peek_distance user) (:peek_distance user)
                           @default-peek-distance)
           eggs (e/find-awardable-eggs-by-distance (:lat params)

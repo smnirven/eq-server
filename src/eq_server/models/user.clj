@@ -1,11 +1,11 @@
 (ns eq-server.models.user
-  (:require [crypto.password.bcrypt :as crypto]
+  (:require [cemerick.friend.credentials :as creds]
             [eq-server.db :as db]
             [clojure.java.jdbc :as j]
             [clojure.java.jdbc.sql :as s])
   (:import [java.util UUID]))
 
-(defn- find-user-by
+(defn- find-by
   [field value]
   (j/with-connection (db/db-connection)
     (j/with-query-results res
@@ -15,11 +15,11 @@
 
 (defn pwd-match?
   [plain-pwd crypted-pwd]
-  (crypto/check plain-pwd crypted-pwd))
+  (creds/bcrypt-verify plain-pwd crypted-pwd))
 
 (defn encrypt-pwd
   [plain-pwd]
-  (crypto/encrypt plain-pwd))
+  (creds/hash-bcrypt plain-pwd))
 
 (defn create!
   [user]
@@ -33,25 +33,23 @@
       (j/insert-records :users insertable-user))
   user-guid))
 
-(defn find-user-by-email
+(defn find-by-email
   [email]
-  (find-user-by :email email))
+  (find-by :email email))
 
-(defn find-user-by-guid
+(defn find-by-guid
   [user-guid]
-  (find-user-by :guid user-guid))
+  (find-by :guid user-guid))
 
-(defn find-and-authenticate
-  "Authenticates a user"
-  [email pwd]
-  (let [user (find-user-by-email email)]
-    (and user (pwd-match? pwd (:crypted_pwd user)))))
+(defn find-by-username
+  [username]
+  (find-by :username username))
 
 ;; TODO: Wrap this in a transaction
 ;; TODO: update this to use non-deprecated jdbc method calls
 (defn delete-user!
   [user-guid]
-  (let [user-to-delete (find-user-by-guid user-guid)]
+  (let [user-to-delete (find-by-guid user-guid)]
     (j/with-connection (db/db-connection)
       (j/delete-rows :users  ["id = ?" (:id user-to-delete)])
       (j/delete-rows :peeks ["user_id = ?" (:id user-to-delete)])
