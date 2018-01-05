@@ -20,14 +20,10 @@
                  [cheshire "5.2.0"]
                  [crypto-password "0.1.1"]
                  [clj-time "0.6.0" :exclusions [[clojure :classifier "*"]]]
-                 [com.netflix.curator/curator-framework "1.3.3"]
-                 [com.netflix.curator/curator-recipes "1.3.3"]
                  [liberator "0.10.0"]
                  [com.cemerick/friend "0.2.0"]]
   :ring {:handler eq-server.routes/app
          :init eq-server.core/init!
          :auto-reload? true
          :reload-paths "src"
-         :nrepl {:start? true :port 55555}}
-  :aws {:beanstalk {:environments [{:name "eq-prod" :cname-prefix "eq-prod"}
-                                   {:name "eq-dev" :cname-prefix "eq-dev"}]}})
+         :nrepl {:start? true :port 55555}})

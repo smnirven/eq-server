@@ -1,8 +1,7 @@
 (ns ^{:author "Thomas Steffes"
       :doc "Core Application for EggQuest Web Service"}
     eq-server.core
-  (:require [clojure.tools.logging :as log]
-            [eq-server.drcfg :as drcfg]))
+  (:require [clojure.tools.logging :as log]))
 
 (defn- get-env
   []
@@ -18,6 +17,4 @@
   []
   (do
     (log/info "Starting Initialization")
-    (log/info (str "Stage is set to: " (stage)))
-    (log/trace "Initializing ZooKeeper")
-    (drcfg/connect! "localhost:2181")))
+    (log/info (str "Stage is set to: " (stage)))))

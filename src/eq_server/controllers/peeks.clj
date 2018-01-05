@@ -5,14 +5,12 @@
             [eq-server.models.peek :as p]
             [eq-server.models.user :as u]
             [eq-server.models.egg  :as e]
-            [eq-server.drcfg :as drcfg]
             [clojure.tools.logging :as log]
             [cheshire.core :refer :all]))
 
-;; DYNAMIC CONFIGS
-(drcfg/def>- max-awardable-eggs 1)
-(drcfg/def>- default-hourly-peek-limit 3)
-(drcfg/def>- default-peek-distance 1000)
+(def max-awardable-eggs 1)
+(def default-hourly-peek-limit 3)
+(def default-peek-distance 1000)
 
 ;; PARAMETER VALIDATIONS *************************************************************************************
 (def required-peek-params [:lat :lng :user-guid])
